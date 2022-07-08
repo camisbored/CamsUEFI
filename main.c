@@ -1,3 +1,9 @@
+/*
+  main.c- @author Cameron Grande
+  contains our main logic to be executed upon boot. Currently contains basic I/O 
+  functionality and ability to draw graphics to screen. This is currently
+  the only source file in this project.
+*/
 #include <efi.h>
 #include <efilib.h>
  
