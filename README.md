@@ -26,7 +26,7 @@ This was developed in native Linux (Ubuntu 20.04) and should be able to be built
 I've included a build script and a run script. All that should be needed to build is gcc and having the 
 gnu-efi library in your include folder (or modify script/path). To run, you will need to have qemu working.
 If working from a CLI only environment, you can add the -nographics option to the build script, which will 
-work but remove any graphical capabilities.
+work but remove any graphical capabilities. The OVMF.fd file is a required driver for QEMU to work with UEFI properly.
 
 To boot from this on your machine, one level into the image folder you can copy the entire efi folder to a flash drive.
 This means that from a FAT32 usb, you would have the following path and file contained: /efi/boot/BOOTX64.efi
