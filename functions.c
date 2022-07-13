@@ -4,11 +4,12 @@
   @author Cameron Grande
 */
 
+#include "george.c"
 //globals and strucutres
 uint32_t base = 0;
 int pixelsPerLine = 0; 
 EFI_INPUT_KEY key;
-CHAR16 *userString =  L"DEFAULT STRING";
+CHAR16 *userString =  L"___DEFAULT_STRING___";
 int userStringIndex = 0;
 CHAR16 *currentChar =  L" ";
 CHAR16 *invalidCmd = L"!!!Invalid command!!!\r\n";
@@ -24,19 +25,21 @@ EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *info;
 EFI_TIME* time;
 UINTN SizeOfInfo, numModes, nativeMode;
 
-CHAR16 *helpMenu = L" ------------------------\r\n\
-		 |      Help Menu       |\r\n\
-		 ------------------------\r\n\
-		 |clear- clears screen  |\r\n\
-		 ------------------------\r\n\
-		 |exit- leave UEFI      |\r\n\
-		 ------------------------\r\n\
-		 |color- change color   |\r\n\
-		 ------------------------\r\n\
-		 |graphics- test/draw   |\r\n\
-		 ------------------------\r\n\
-		 |newline- new line     |\r\n\
-		 ------------------------\r\n";
+CHAR16 *helpMenu = L" -----------------------------------------------------------------------\r\n\
+		 |         Help Menu                                                   |\r\n\
+		 -----------------------------------------------------------------------\r\n\
+		 | clear- clears screen                                                |\r\n\
+		 -----------------------------------------------------------------------\r\n\
+		 | exit- leave UEFI (Will return to machine default or BIOS menu)      |\r\n\
+		 -----------------------------------------------------------------------\r\n\
+		 | color- change color of text on screen                               |\r\n\
+		 -----------------------------------------------------------------------\r\n\
+		 | draw- will draw an image of a cat on a screen using different modes |\r\n\
+		 -----------------------------------------------------------------------\r\n\
+		 | graphics- will cycle through graphics modes/print statistics/draw   |\r\n\
+		 -----------------------------------------------------------------------\r\n\
+		 | newline- prints new line                                            |\r\n\
+		 -----------------------------------------------------------------------\r\n";
 
 void clearScreen(){
 	uefi_call_wrapper(ST->ConOut->ClearScreen, 1, ST->ConOut);
@@ -70,31 +73,31 @@ void printPrompt(){
 	uefi_call_wrapper(ST->ConOut->OutputString, 2, ST->ConOut, L"$>");
 }
 
-void drawPixel(int x, int y, uint32_t color){
-	*((uint32_t*)(base + (3 * pixelsPerLine * y) + (3 * x))) = color;
+//draws pixel with bpp bytes per pixel
+void drawPixel(int x, int y, uint32_t color, int bpp){
+	*((uint32_t*)(base + (bpp * pixelsPerLine * y) + (bpp * x))) = color;
 }
 
-void drawBox(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY, uint32_t color){
+
+void drawBox(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY, uint32_t color, int bpp){
 	int x = topLeftX, y = topLeftY;
 	while (y++ < bottomRightY){
 		while (x < bottomRightX)
-			drawPixel(x++,y,color);
+			drawPixel(x++,y,color,bpp);
 		x=topLeftX;
 	}
 }
 
 void changeColor(){
-	//Print(L"Green: %x\n", EFI_GREEN);
-	//Print(L"Red: %x\n", EFI_RED);
 	uefi_call_wrapper(ST->ConOut->SetAttribute, 1, ST->ConOut, color++);
 }
 
-void drawRainboxBox(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY){
+void drawRainboxBox(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY, int bpp){
 	uint8_t red = 0x00, green = 0x00, blue = 0x00;
 	int x = topLeftX, y = topLeftY;
 	while (y++ < bottomRightY){
 		while (x < bottomRightX)
-				drawPixel(x++,y,(((((0x00000000 | red++) << 8) | green++) << 8) | blue++));
+				drawPixel(x++,y,(((((0x00000000 | red++) << 8) | green++) << 8) | blue++), bpp);
 		x=topLeftX;
 	}
 }
@@ -119,6 +122,24 @@ void getCh(){
 	}
 }
 
+//draws image with bpp bytes per pixel
+ void draw_icon(int x, int y, int w, int h, unsigned char* img, int bpp) {
+  int  l, i, j;
+  i=0;j=0;l=0;
+     //Print(L"x:%d, y:%d, w:%d, h:%d\n", x, y, w, h);
+     uint8_t currentRed = 0x00;
+     uint8_t currentGreen = 0x00;
+     uint8_t currentBlue = 0x00;
+     for (l = 0; l < h; l++) {
+         for (i = 0; i < w; i++) {
+            currentRed = img[j++];
+            currentGreen = img[j++];
+            currentBlue = img[j++];
+            drawPixel(x + i, y + l, (((((0x00000000 | currentRed) << 8) | currentGreen) << 8) | currentBlue), bpp);
+         }
+     }
+ }
+ 
 void getInput(){
     while(1){
 	getCh();
@@ -131,10 +152,40 @@ void getInput(){
 		newLine();
 	    	return;
 	 }
-	else
+	else if (userStringIndex < 19)
   		userString[userStringIndex++] = currentChar[0];
-	uefi_call_wrapper(ST->ConOut->OutputString, 2, ST->ConOut, currentChar);
+  	if (userStringIndex < 19)
+		uefi_call_wrapper(ST->ConOut->OutputString, 2, ST->ConOut, currentChar);
    }
+}
+
+void drawCat(){
+	//init graphics mode if not already in
+	 status = uefi_call_wrapper(BS->LocateProtocol, 3, &gopGuid, NULL, (void**)&gop);
+	  status = uefi_call_wrapper(gop->QueryMode, 4, gop, gop->Mode==NULL?0:gop->Mode->Mode, &SizeOfInfo, &info);
+	  if (status == EFI_NOT_STARTED)
+	    status = uefi_call_wrapper(gop->SetMode, 2, gop, 0);
+	  if(EFI_ERROR(status)) {
+	    Print(L"Unable to get native mode");
+	  } else {
+	    nativeMode = gop->Mode->Mode;
+	    numModes = gop->Mode->MaxMode;
+	 }
+	 int mode = gop->Mode->MaxMode-1;
+	 status = uefi_call_wrapper(gop->SetMode, 2, gop, mode);
+	 base = gop->Mode->FrameBufferBase;
+	 pixelsPerLine = gop->Mode->Info->PixelsPerScanLine;
+	 
+	//draw image 
+	Print(L"For the following screens, press any key to continue after image is displayed\n");
+	Print(L"Press key to start.\n");
+	getCh();
+	clearScreen();
+	draw_icon(x, y, GEORGE_WIDTH, GEORGE_HEIGHT, GEORGE_IMG, 3);
+	getCh();
+	clearScreen();
+	draw_icon(x, y, GEORGE_WIDTH, GEORGE_HEIGHT, GEORGE_IMG, 4);
+	getCh();
 }
 
 void graphicsTest(){
@@ -205,14 +256,41 @@ void graphicsTest(){
 	 for (int i=0;i<327680;i+=3,address+=3)
 	 	*((uint32_t*)(address)) = pixel;
 	 	
-	 drawPixel(0, 0, 0x0000FF00);
-	 drawBox(200,200,250,250,0x00FF0000);
-	 drawBox(300,200,350,250,0x0000FF00);
-	 drawBox(400,200,450,250,0x000000FF);
-	 drawRainboxBox(500,200,550,250);
+	 drawBox(200,200,250,250,0x00FF0000, 3);
+	 drawBox(300,200,350,250,0x0000FF00, 3);
+	 drawBox(400,200,450,250,0x000000FF, 3);
+	 drawRainboxBox(500,200,550,250, 3);
+	 
+	 Print(L"Previous was mode 1, press key for mode 2");	 
+	 getCh();
+	 clearScreen();
+	 address = base + (4 * pixelsPerLine * y) + (4 * x);
+	 pixel = 0x00FF0000;
+	 for (int i=0;i<327680;i+=4,address+=4)
+	 	*((uint32_t*)(address)) = pixel;
+	 	
+	 drawBox(200,200,250,250,0x00FF0000, 4);
+	 drawBox(300,200,350,250,0x0000FF00, 4);
+	 drawBox(400,200,450,250,0x000000FF, 4);
+	 drawRainboxBox(500,200,550,250, 4);
+	 	
+	 Print(L"Press key for mode 3");	 
+	 getCh();
+	 address = base + (2 * pixelsPerLine * y) + (2 * x);
+	 uint16_t pixel2 = 0xFF00;
+	 for (int i=0;i<327680;i+=2,address+=2)
+	 	*((uint32_t*)(address)) = pixel2;
+	 	
+	 Print(L"Press key for mode 4");	 
+	 getCh();
+	 address = base + (pixelsPerLine * y) + (x);
+	 uint8_t pixel3 = 0xF2;
+	 for (int i=0;i<327680;i+=1,address+=1)
+	 	*((uint32_t*)(address)) = pixel3;
 	 	
 	 Print(L"Ok cool\n");
-	 Print(L"Use arrow keys to move or press [ESC] to return\n");
+	 Print(L"Use arrow keys to move, b to set color black, c to change color, or press [ESC] to return\n");
+
 	 while(1){
 	 	getCh();
 	 	if ((UINTN)key.ScanCode == 0x17){
@@ -231,6 +309,7 @@ void graphicsTest(){
 			x++;
 		else if (key.ScanCode == 0x04)
 			x--;
-		drawPixel(x,y, pixelColor);
+		drawPixel(x,y, pixelColor, 3);
+		drawPixel(x,y, pixelColor, 4);
 	 }
 }

@@ -29,6 +29,8 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable){
 			changeColor();
 		  else if (strcmp(L"help", userString))
 			printHelp();
+		  else if (strcmp(L"draw", userString))
+			drawCat();
 		  else if (strcmp(L"exit", userString))
 			return EFI_SUCCESS;
 		  else if (strcmp(L"graphics", userString))
