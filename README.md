@@ -14,13 +14,14 @@ Currenly this-
 6. Upon pressing escape, will exit and return to your machines default landing location.
 7. Prints invalid command message and help menu if invalid input is given.
 8. Renders image of Cat to the screen via draw command.
+9. Plays video of Cat based on bytes per pixel given (no way to return currently)
 
 
 Todo-
 1. Add mouse functionality.
 2. Change navigation to GUI maybe? At least give more developed shell.
-3. Make this do something more useful, maybe Snake or Pong game.
-4. Break this out into a different file structure after expanding? (Currently 3 c files).
+3. Make this do something more useful, maybe Snake or Pong game, interact with file system.
+4. Break this out into a different file structure after expanding? (Currently 4 c files in root folder).
 
 
 This was developed in native Linux (Ubuntu 20.04) and should be able to be built standard from a similar environment.
