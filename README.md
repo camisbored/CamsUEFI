@@ -20,7 +20,7 @@ Todo-
 1. Add mouse functionality.
 2. Change navigation to GUI maybe? At least give more developed shell.
 3. Make this do something more useful, maybe Snake or Pong game.
-4. Break this out into a different file structure after expanding? (Currently 2 c files).
+4. Break this out into a different file structure after expanding? (Currently 3 c files).
 
 
 This was developed in native Linux (Ubuntu 20.04) and should be able to be built standard from a similar environment.
