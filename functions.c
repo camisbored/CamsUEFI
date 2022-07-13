@@ -4,7 +4,7 @@
   @author Cameron Grande
 */
 
-#include "george.c"
+#include "images.c"
 //globals and strucutres
 uint32_t base = 0;
 int pixelsPerLine = 0; 
@@ -26,7 +26,7 @@ EFI_TIME* time;
 UINTN SizeOfInfo, numModes, nativeMode;
 
 CHAR16 *helpMenu = L" -----------------------------------------------------------------------\r\n\
-		 |         Help Menu                                                   |\r\n\
+		 |                           Help Menu                                 |\r\n\
 		 -----------------------------------------------------------------------\r\n\
 		 | clear- clears screen                                                |\r\n\
 		 -----------------------------------------------------------------------\r\n\
@@ -41,6 +41,8 @@ CHAR16 *helpMenu = L" ----------------------------------------------------------
 		 | newline- prints new line                                            |\r\n\
 		 -----------------------------------------------------------------------\r\n";
 
+
+//generic shell features
 void clearScreen(){
 	uefi_call_wrapper(ST->ConOut->ClearScreen, 1, ST->ConOut);
 }
@@ -102,6 +104,8 @@ void drawRainboxBox(int topLeftX, int topLeftY, int bottomRightX, int bottomRigh
 	}
 }
 
+
+//strcmp implementation- will compare two strings, return 1 if equal, 2 if not
 int strcmp(CHAR16 *str1, CHAR16 *str2){
     CHAR16* pt1 = &str1[0];
     CHAR16* pt2 = &str2[0];
@@ -111,6 +115,8 @@ int strcmp(CHAR16 *str1, CHAR16 *str2){
     return 1;
 }
 
+
+//getCh implementation- will wait until key pressed and load char value into key variable
 void getCh(){
 	while(1){
   	    for(int i=0;i<500;i++) 
@@ -122,38 +128,33 @@ void getCh(){
 	}
 }
 
-//draws image with bpp bytes per pixel
+//draws image with bpp bytes per pixel where img is a pointer to the image
  void draw_icon(int x, int y, int w, int h, unsigned char* img, int bpp) {
-  int  l, i, j;
-  i=0;j=0;l=0;
-     //Print(L"x:%d, y:%d, w:%d, h:%d\n", x, y, w, h);
-     uint8_t currentRed = 0x00;
-     uint8_t currentGreen = 0x00;
-     uint8_t currentBlue = 0x00;
-     for (l = 0; l < h; l++) {
-         for (i = 0; i < w; i++) {
-            currentRed = img[j++];
-            currentGreen = img[j++];
-            currentBlue = img[j++];
-            drawPixel(x + i, y + l, (((((0x00000000 | currentRed) << 8) | currentGreen) << 8) | currentBlue), bpp);
-         }
-     }
+  int  l, i, j = 0;
+     for (l = 0; l < h; l++) 
+         for (i = 0; i < w; i++)
+            *((uint32_t*)(base + (bpp * pixelsPerLine * (y+l)) + (bpp * (x+i)))) =(((((0x00000000 | img[j++]) << 8) | img[j++]) << 8) | img[j++]);
  }
  
+//getInput- loads string input into userInput buffer. registers by pressing enter key. 
 void getInput(){
     while(1){
 	getCh();
 	currentChar[0]=(UINTN)key.UnicodeChar;
+	//if backspace pressed
 	if (currentChar[0] == 0x08)
 	   userStringIndex--;
+	//if enter pressed
 	else if (currentChar[0] == 0x0D){
 		userString[userStringIndex]=0x00;
 		userStringIndex=0;
 		newLine();
 	    	return;
 	 }
+	 //if within valid range
 	else if (userStringIndex < 19)
   		userString[userStringIndex++] = currentChar[0];
+  	//print key pressed to screen
   	if (userStringIndex < 19)
 		uefi_call_wrapper(ST->ConOut->OutputString, 2, ST->ConOut, currentChar);
    }
@@ -177,15 +178,50 @@ void drawCat(){
 	 pixelsPerLine = gop->Mode->Info->PixelsPerScanLine;
 	 
 	//draw image 
-	Print(L"For the following screens, press any key to continue after image is displayed\n");
-	Print(L"Press key to start.\n");
+	Print(L"For the following screens, press [ESC] to continue after image is displayed\n");
+	Print(L"Press any key to start.\n");
 	getCh();
 	clearScreen();
 	draw_icon(x, y, GEORGE_WIDTH, GEORGE_HEIGHT, GEORGE_IMG, 3);
-	getCh();
+	//allow image to be moved aroudn screen until ESC pressed
+	 while(1){
+	 	getCh();
+	 	clearScreen();
+	 	if ((UINTN)key.ScanCode == 0x17){
+	 		clearScreen();
+	 		printInitialMenu();
+	 		break;
+	 	} else if (key.ScanCode == 0x01)
+			y-=10;
+		else if (key.ScanCode == 0x02)
+			y+=10;
+		else if (key.ScanCode == 0x03)
+			x+=10;
+		else if (key.ScanCode == 0x04)
+			x-=10;
+		draw_icon(x, y, GEORGE_WIDTH, GEORGE_HEIGHT, GEORGE_IMG, 3);
+	 }
 	clearScreen();
+	
+	//do same for 4 byte per pixel systems
 	draw_icon(x, y, GEORGE_WIDTH, GEORGE_HEIGHT, GEORGE_IMG, 4);
-	getCh();
+	 while(1){
+	 	getCh();
+	 	clearScreen();
+	 	if ((UINTN)key.ScanCode == 0x17){
+	 		clearScreen();
+	 		printInitialMenu();
+	 		break;
+	 	}else if (key.ScanCode == 0x01)
+			y-=10;
+		else if (key.ScanCode == 0x02)
+			y+=10;
+		else if (key.ScanCode == 0x03)
+			x+=10;
+		else if (key.ScanCode == 0x04)
+			x-=10;
+		draw_icon(x, y, GEORGE_WIDTH, GEORGE_HEIGHT, GEORGE_IMG, 4);
+	 }
 }
 
 void graphicsTest(){
