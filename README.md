@@ -13,6 +13,7 @@ Currenly this-
 5. Enters a graphics mode, where it will draw some shapes and colors to the screen.
 6. Upon pressing escape, will exit and return to your machines default landing location.
 7. Prints invalid command message and help menu if invalid input is given.
+8. Renders image of Cat to the screen via draw command.
 
 
 Todo-
