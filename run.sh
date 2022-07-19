@@ -1,1 +1,1 @@
-qemu-system-x86_64 -bios OVMF.fd -drive file=fat:rw:image,media=disk,format=raw
+qemu-system-x86_64 -soundhw pcspk -bios OVMF.fd -drive file=fat:rw:image,media=disk,format=raw
