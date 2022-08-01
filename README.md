@@ -1,11 +1,11 @@
 # CamsUEFI
 A UEFI Bootloader with I/O and graphical capabilities.
 
-![IMG_20220801_083101538](https://user-images.githubusercontent.com/81730723/182148829-592622fa-1d9d-4547-9549-f1ffa44aa00f.jpg)
-
 Being that BIOs is deprecated and my recent OS dev work uses BIOs, I thought it might be more useful to start looking into UEFI development. 
 This project is a bootable UEFI program that takes input from mouse and keyboard and performs some Graphical and I/O functions.
 *THIS IS A WORK IN PROGRESS*
+
+![IMG_20220801_083101538](https://user-images.githubusercontent.com/81730723/182148829-592622fa-1d9d-4547-9549-f1ffa44aa00f.jpg)
 
 Currenly this-
 1. Boots and displays welcome message/menu  
