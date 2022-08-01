@@ -14,7 +14,11 @@ Currenly this-
 3. Has printing, new line, clear screen functions.
 4. Will launch GUI with mouse capabilities if no key pressed within 5 seconds on launch. 
 ![image](https://user-images.githubusercontent.com/81730723/182147661-7a9ff64f-8711-4675-9d16-7b89c0237e2a.png)
-5. Enters a graphics mode, where it will draw some shapes and colors to the screen.
+5. Enters a graphics mode, where it will draw some shapes and colors to the screen. 
+![image](https://user-images.githubusercontent.com/81730723/182154467-beecf1cd-0be7-43c4-874e-ca59be4d12a8.png)
+![image](https://user-images.githubusercontent.com/81730723/182154546-044759f5-b184-4381-965b-4fd308e0961b.png)
+![image](https://user-images.githubusercontent.com/81730723/182154598-f8875013-832b-4ab7-a39d-6ca4417ce95e.png)
+
 6. Upon typing exit, will exit and return to your machines default landing location.
 7. Prints invalid command message and help menu if invalid input is given.
 8. Renders image of Cat to the screen via draw command (or clicking pic in GUI, can be closed with X). 
