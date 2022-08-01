@@ -1,6 +1,8 @@
 # CamsUEFI
 A UEFI Bootloader with I/O and graphical capabilities.
 
+![IMG_20220801_083101538](https://user-images.githubusercontent.com/81730723/182148829-592622fa-1d9d-4547-9549-f1ffa44aa00f.jpg)
+
 Being that BIOs is deprecated and my recent OS dev work uses BIOs, I thought it might be more useful to start looking into UEFI development. 
 This project is a bootable UEFI program that takes input from mouse and keyboard and performs some Graphical and I/O functions.
 *THIS IS A WORK IN PROGRESS*
@@ -15,9 +17,12 @@ Currenly this-
 5. Enters a graphics mode, where it will draw some shapes and colors to the screen.
 6. Upon typing exit, will exit and return to your machines default landing location.
 7. Prints invalid command message and help menu if invalid input is given.
-8. Renders image of Cat to the screen via draw command. 
+8. Renders image of Cat to the screen via draw command (or clicking pic in GUI, can be closed with X). 
 
 ![image](https://user-images.githubusercontent.com/81730723/182147826-c87ef7c9-a67d-4194-906d-6e9aca9e60a6.png)
+
+![IMG_20220801_083101538](https://user-images.githubusercontent.com/81730723/182148996-cc58e666-05bb-48f9-9796-64e89b8b5cd1.jpg)
+
 
 9. Plays video of Cat based on bytes per pixel given (with sound)
 10. Provides sound mode where you can input keys to buzz different frequencies.
