@@ -21,8 +21,7 @@ Currenly this-
 
 ![image](https://user-images.githubusercontent.com/81730723/182147826-c87ef7c9-a67d-4194-906d-6e9aca9e60a6.png)
 
-![IMG_20220801_083101538](https://user-images.githubusercontent.com/81730723/182148996-cc58e666-05bb-48f9-9796-64e89b8b5cd1.jpg)
-
+![IMG_20220801_083159157_HDR](https://user-images.githubusercontent.com/81730723/182149239-b53092d5-8636-4b9d-a35f-6756a9c7e56a.jpg)
 
 9. Plays video of Cat based on bytes per pixel given (with sound)
 10. Provides sound mode where you can input keys to buzz different frequencies.
