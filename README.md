@@ -6,14 +6,19 @@ This project is a bootable UEFI program that takes input from mouse and keyboard
 *THIS IS A WORK IN PROGRESS*
 
 Currenly this-
-1. Boots and displays welcome message/menu
+1. Boots and displays welcome message/menu  
+![image](https://user-images.githubusercontent.com/81730723/182147369-7a96e148-f5b0-4215-a226-202d8f467031.png)
 2. Takes keyboard input for the function you want to call.
 3. Has printing, new line, clear screen functions.
-4. Will launch GUI with mouse capabilities if no key pressed within 5 seconds on launch.
+4. Will launch GUI with mouse capabilities if no key pressed within 5 seconds on launch. 
+![image](https://user-images.githubusercontent.com/81730723/182147661-7a9ff64f-8711-4675-9d16-7b89c0237e2a.png)
 5. Enters a graphics mode, where it will draw some shapes and colors to the screen.
 6. Upon typing exit, will exit and return to your machines default landing location.
 7. Prints invalid command message and help menu if invalid input is given.
-8. Renders image of Cat to the screen via draw command.
+8. Renders image of Cat to the screen via draw command. 
+
+![image](https://user-images.githubusercontent.com/81730723/182147826-c87ef7c9-a67d-4194-906d-6e9aca9e60a6.png)
+
 9. Plays video of Cat based on bytes per pixel given (with sound)
 10. Provides sound mode where you can input keys to buzz different frequencies.
 11. Will print time (inaccurately- somethings off)
